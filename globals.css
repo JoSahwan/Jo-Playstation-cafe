@@ -1,0 +1,86 @@
+"use client";
+import { useEffect, useState } from "react";
+
+const AWARDS = [
+  { icon: "🏆", title: "أفضل كافيه", sub: "تجربة فريدة في المنطقة", color: "#F0C966" },
+  { icon: "🎮", title: "PS4 & PS5", sub: "أحدث الأجهزة والألعاب", color: "#00D4FF" },
+  { icon: "📶", title: "WiFi فائق السرعة", sub: "مجاني لكل الزباين", color: "#00D4FF" },
+  { icon: "📚", title: "Study Zone", sub: "جو هادي للمذاكرة", color: "#F0C966" },
+  { icon: "☕", title: "قهوة احترافية", sub: "ماكينة 5-Star", color: "#C9A84C" },
+  { icon: "🕐", title: "12ظ → 12ليل", sub: "متاح كل يوم", color: "#7BA8BC" },
+];
+
+export default function InfoSection() {
+  const [url, setUrl] = useState("");
+  useEffect(() => { setUrl(window.location.href); }, []);
+
+  return (
+    <section className="py-20 px-4 max-w-5xl mx-auto">
+      {/* Awards grid */}
+      <div className="text-center mb-14">
+        <p className="text-[#00D4FF] text-xs tracking-[6px] uppercase mb-3">WHY US</p>
+        <h2 className="text-4xl font-black" style={{fontFamily:"'Cinzel Decorative',serif",
+          background:"linear-gradient(135deg,#F0C966,#C9A84C,#00D4FF)",
+          WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>
+          ليه Jo Cafe؟
+        </h2>
+        <div className="w-24 h-px mx-auto mt-4" style={{background:"linear-gradient(90deg,transparent,#00D4FF,transparent)"}} />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-16">
+        {AWARDS.map((a, i) => (
+          <div key={i} className="card-3d glass neon-border rounded-2xl p-6 text-center group" style={{ animationDelay: `${i * 0.1}s` }}>
+            <div className="text-4xl mb-3 animate-float" style={{ animationDelay: `${i * 0.3}s` }}>{a.icon}</div>
+            <h3 className="font-black text-sm text-white mb-1">{a.title}</h3>
+            <p className="text-[#7BA8BC] text-xs">{a.sub}</p>
+            <div className="w-8 h-0.5 mx-auto mt-3 rounded-full" style={{ background: a.color }} />
+          </div>
+        ))}
+      </div>
+
+      {/* QR Section */}
+      <div className="glass neon-border rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none"
+          style={{background:"radial-gradient(ellipse at center,rgba(0,212,255,0.05),transparent 70%)"}} />
+        <div className="relative z-10">
+          <p className="text-[#00D4FF] text-xs tracking-[6px] uppercase mb-4">SCAN TO ORDER</p>
+          <h3 className="text-2xl font-black text-white mb-2">اسكن الـ QR</h3>
+          <p className="text-[#7BA8BC] text-sm mb-8">افتح المنيو على موبايلك واطلب مباشرة</p>
+
+          {/* QR placeholder — real QR via qrcode.react on client */}
+          <div id="qr-container" className="flex justify-center mb-6">
+            <div className="w-36 h-36 glass neon-border rounded-2xl flex items-center justify-center">
+              <QRDisplay url={url} />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 text-[#7BA8BC] text-xs">
+            <span className="w-8 h-px bg-[#0E3A52]" />
+            <span className="tracking-widest">JO-CAFE.VERCEL.APP</span>
+            <span className="w-8 h-px bg-[#0E3A52]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center mt-16 text-[#7BA8BC] text-xs tracking-widest space-y-2">
+        <p style={{fontFamily:"'Cinzel Decorative',serif",color:"#C9A84C",fontSize:"1.1rem"}}>Jo</p>
+        <p>PLAYSTATION CAFE — LAUNCH YOUR IDEAS — 2025</p>
+        <div className="flex gap-6 justify-center mt-4 text-sm">
+          {["△","○","✕","□"].map((s,i) => (
+            <span key={i} className="animate-shimmer" style={{color:["#3B82F6","#EF4444","#E5E7EB","#F59E0B"][i],animationDelay:`${i*0.4}s`}}>{s}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function QRDisplay({ url }: { url: string }) {
+  const [QRCode, setQRCode] = useState<React.ComponentType<{value:string,size:number,bgColor:string,fgColor:string}> | null>(null);
+  useEffect(() => {
+    import("qrcode.react").then(m => setQRCode(() => m.QRCodeSVG as React.ComponentType<{value:string,size:number,bgColor:string,fgColor:string}>));
+  }, []);
+  if (!QRCode || !url) return <span className="text-[#7BA8BC] text-xs">QR</span>;
+  return <QRCode value={url} size={120} bgColor="transparent" fgColor="#00D4FF" />;
+}

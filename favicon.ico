@@ -1,0 +1,46 @@
+"use client";
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { MenuItem } from "../lib/menu";
+
+export interface CartItem extends MenuItem { qty: number; }
+
+interface CartCtx {
+  items: CartItem[];
+  add: (item: MenuItem) => void;
+  remove: (id: string) => void;
+  increment: (id: string) => void;
+  decrement: (id: string) => void;
+  clear: () => void;
+  total: number;
+  count: number;
+}
+
+const Ctx = createContext<CartCtx | null>(null);
+
+export function CartProvider({ children }: { children: ReactNode }) {
+  const [items, setItems] = useState<CartItem[]>([]);
+
+  const add = useCallback((item: MenuItem) => {
+    setItems(prev => {
+      const ex = prev.find(i => i.id === item.id);
+      if (ex) return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + 1 } : i);
+      return [...prev, { ...item, qty: 1 }];
+    });
+  }, []);
+
+  const remove = useCallback((id: string) => setItems(prev => prev.filter(i => i.id !== id)), []);
+  const increment = useCallback((id: string) => setItems(prev => prev.map(i => i.id === id ? { ...i, qty: i.qty + 1 } : i)), []);
+  const decrement = useCallback((id: string) => setItems(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty - 1) } : i).filter(i => i.qty > 0)), []);
+  const clear = useCallback(() => setItems([]), []);
+
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = items.reduce((s, i) => s + i.qty, 0);
+
+  return <Ctx.Provider value={{ items, add, remove, increment, decrement, clear, total, count }}>{children}</Ctx.Provider>;
+}
+
+export function useCart() {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("useCart outside provider");
+  return ctx;
+}

@@ -1,0 +1,29 @@
+import type { Config } from "tailwindcss";
+export default {
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        tajawal: ["var(--font-tajawal)", "sans-serif"],
+        cinzel: ["var(--font-cinzel)", "serif"],
+      },
+      colors: {
+        bg: "#050C14", surface: "#0A1825", card: "#0D1F30",
+        border: "#0E3A52", cyan: "#00D4FF", gold: "#C9A84C",
+        gold2: "#F0C966", muted: "#7BA8BC",
+      },
+      animation: {
+        shimmer: "shimmer 3s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
+        glow: "glow 2s ease-in-out infinite",
+        "spin-slow": "spin 20s linear infinite",
+      },
+      keyframes: {
+        shimmer: { "0%,100%": { opacity: "1" }, "50%": { opacity: "0.6" } },
+        float: { "0%,100%": { transform: "translateY(0px)" }, "50%": { transform: "translateY(-12px)" } },
+        glow: { "0%,100%": { boxShadow: "0 0 20px rgba(0,212,255,0.3)" }, "50%": { boxShadow: "0 0 50px rgba(0,212,255,0.7)" } },
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config;
